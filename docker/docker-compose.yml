@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+
+  database:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: souvip
+    ports:
+      - "5432:5432"
+    networks:
+      souvip:
+
+  database_view:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ronaldo.softsystem@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "8081:80"
+    networks:
+      souvip:
+    depends_on:
+      - database
+
+networks:
+  souvip:
+    driver: bridge
