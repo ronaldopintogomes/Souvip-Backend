@@ -9,11 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@RestController("/client")
+@RestController
+@RequestMapping("/client")
 public class ClientController {
+
     @Autowired
     private ClientService clientService;
+
     @Autowired
     private ModelMapper modelMapper;
 
@@ -34,27 +38,16 @@ public class ClientController {
         clientService.delete(id);
     }
 
-    @GetMapping("/clients")
-    @ResponseBody
-    public List<Client> findAll() {
-        return clientService.findAll();
+    @GetMapping("/all")
+    public List<ClientDto> findAll() {
+        return clientService.findAll()
+            .stream()
+            .map(client -> modelMapper.map(client, ClientDto.class))
+            .collect(Collectors.toList());
     }
 
-    @GetMapping("/client/{id}")
-    @ResponseBody
-    public Client findById(@PathVariable Long id) {
-        return clientService.findById(id);
-    }
-
-    //resolucao temporaria. utilizar bibliotecas que facilitem o transporte de dados dos dtos para as entidades
-    private Client getClient(ClientDto dto) {
-        return Client.builder()
-                .name(dto.getName())
-                .cpf(Long.valueOf(dto.getCpf().replace(".", "").replace("-", "")))
-                .email(dto.getEmail())
-                .password(dto.getPassword().getBytes())
-                .events(dto.getEvents())
-                .tickets(dto.getTickets())
-                .build();
+    @GetMapping("/{id}")
+    public ClientDto findById(@PathVariable Long id) {
+        return modelMapper.map(clientService.findById(id), ClientDto.class);
     }
 }

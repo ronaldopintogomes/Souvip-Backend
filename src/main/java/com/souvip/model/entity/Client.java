@@ -40,6 +40,7 @@ public class Client implements Serializable {
     public String toString() {
         return String.format("%s-%s-%s", this.name, this.cpf, this.email);
     }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
